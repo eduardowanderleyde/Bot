@@ -719,19 +719,20 @@ def loadLastSession(bot: Bot):
     except:
         pass
 
-def launch(time: float = 1):
-    creditos = Tk()
-    creditos.title("Créditos")
-    creditos.configure(background = '#1e3743')
-    creditos.resizable(False, False)
-    creditos.minsize(width=400, height=200)
-    nome = Label(master=creditos,text="Criado por:\nRafael Marinho dos Anjos\n2023",background='#1e3743',fg="white")
-    nome.place(relx=0.5,rely=0.5,anchor="center")
-    def timer():
-        sleep(time)
-        creditos.destroy()
-    Thread(target=timer).start()
-    creditos.mainloop()
+def launch(time: float = 0):
+    if time > 0:
+        creditos = Tk()
+        creditos.title("Créditos")
+        creditos.configure(background = '#1e3743')
+        creditos.resizable(False, False)
+        creditos.minsize(width=400, height=200)
+        nome = Label(master=creditos,text="Criado por:\nRafael Marinho dos Anjos\n2023",background='#1e3743',fg="white")
+        nome.place(relx=0.5,rely=0.5,anchor="center")
+        def timer():
+            sleep(time)
+            creditos.destroy()
+        Thread(target=timer).start()
+        creditos.mainloop()
 
     bot = Bot()
     try:
