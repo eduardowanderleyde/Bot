@@ -1,7 +1,8 @@
 from modules.macros import Macro
-from modules.functions import Command, KeyboardCommand, MouseCommand
+from modules.functions import Command, KeyboardCommand, MouseCommand, ConditionalCommand
 import modules.keyboard_bot as keyboard_bot
 from threading import Thread
+from datetime import datetime
 
 class Bot():
     __macroAtual = None # Macro who is loaded on main execution of the program
@@ -41,6 +42,8 @@ class Bot():
                             macro.insertCommand(self.macroLoad(command[1]))
                         if command[0] == "pauseCommand":
                             macro.insertCommand(Command(0, float(command[1])))
+                        if command[0] == "conditionalPlay":
+                            macro.insertCommand(ConditionalCommand(lambda: command[1] == str(datetime.now())[11:16],command[1] , self.macroLoad(command[2]), command[2]))
                     except:
                         pass
         return macro
@@ -72,6 +75,10 @@ class Bot():
     def createKeyboardCommand(self, commandType: int, commandParameters: list) -> None:
         self.__macroAtual.insertCommand(KeyboardCommand(commandType, commandParameters))
 
+    def createConditionalCommand(self, time: str, path: str) -> None:
+        path = "scripts\\"+path+".mcr"
+        self.__macroAtual.insertCommand(ConditionalCommand(lambda: time == str(datetime.now())[11:16], time, self.macroLoad(path), path))
+
     def deleteCommand(self, commandIndex: int) -> None:
         self.__macroAtual.removeCommand(commandIndex)
 
@@ -93,7 +100,7 @@ class Bot():
     def loadMacroAsCommand(self, path: str) -> None:
         self.__macroAtual.insertCommand(self.macroLoad(path))
 
-    def executeMacro(self, stopKey: str) -> None:
+    def executeMacro(self, stopKey: str = default_stop_key) -> None:
         self.__macroAtual.executeMacro(stopKey)
 
     def executeMacroUndefined(self, stopKey: str) -> None:

@@ -107,6 +107,22 @@ class KeyboardCommand(Command):
         for parameter in self.getParameters():
             response += " " + str(parameter)
         return response
+    
+class ConditionalCommand(Command):
+    def __init__(self, condition, time: str, command: Command, path: str) -> None:
+        super().__init__("conditionalPlay", [condition, command])
+        self.__condition = condition
+        self.__command = command
+        self.__path = path
+        self.__time = time
+
+    def call(self):
+        if self.__condition():
+            self.__command.executeMacro("q")
+
+    def __str__(self) -> str:
+        response = "PlayOnTime " + str([self.__time, self.__path])
+        return response
 
 if __name__ == "__main__":
     print(list(mouse_bot.mousePos()))

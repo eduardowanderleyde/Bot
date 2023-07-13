@@ -1,7 +1,7 @@
 from tkinter import Tk, StringVar, Label, OptionMenu, Button, Entry, Listbox, Checkbutton, IntVar
 from modules.bot_system import Bot
 from modules.macros import Macro
-from modules.functions import MouseCommand, KeyboardCommand
+from modules.functions import MouseCommand, KeyboardCommand, ConditionalCommand
 from modules.mouse_bot import mousePos
 from pyautogui import sleep
 from modules.keyboard_bot import whenPressed
@@ -228,7 +228,7 @@ class Application():
             
     def __keyboardCommand(self):
         self.keyboard = Tk()
-        self.keyboard.title("Adicionar comando de mouse")
+        self.keyboard.title("Adicionar comando de teclado")
         self.keyboard.configure(background = '#1e3743')
         self.keyboard.resizable(False, False)
         self.keyboard.minsize(width=400, height=400)
@@ -396,19 +396,25 @@ class Application():
 
     def loadCommands(self):
         self.load = Tk()
-        self.load.title("Adicionar comando de mouse")
+        self.load.title("Adicionar comandos")
         self.load.configure(background = '#1e3743')
         self.load.resizable(False, False)
         self.load.minsize(width=400, height=200)
 
         self.texto_nome = Label(master=self.load,text="Nome do arquivo:",background='#1e3743',fg="white")
-        self.texto_nome.place(relx=0.5, rely=0.2, anchor="center")
+        self.texto_nome.place(relx=0.5, rely=0.1, anchor="center")
 
         self.texto_mcr = Label(master=self.load,text=".mcr",background='#1e3743',fg="white")
-        self.texto_mcr.place(relx=0.85, rely=0.4)
+        self.texto_mcr.place(relx=0.85, rely=0.2)
+
+        self.texto_time = Label(master=self.load,text="Hora",background='#1e3743',fg="white")
+        self.texto_time.place(relx=0.1, rely=0.4)
             
         self.entry_path = Entry(master=self.load)
-        self.entry_path.place(relx=0.1, rely=0.4, relwidth=0.725)
+        self.entry_path.place(relx=0.1, rely=0.2, relwidth=0.725)
+            
+        self.entry_time = Entry(master=self.load)
+        self.entry_time.place(relx=0.32, rely=0.4, relwidth=0.5)
 
         self.button_confirmar = Button(master=self.load,text="Confirmar",command=self.__confirmLoadCommands)
         self.button_confirmar.place(relx=0.3,rely=0.75,relwidth=0.4)
@@ -416,9 +422,14 @@ class Application():
         self.texto_erro = Label(master=self.load,text="",background='#1e3743',fg="red")
         self.texto_erro.place(relx=0.5,rely=0.65,anchor="center")
 
+        self.load.mainloop()
+
     def __confirmLoadCommands(self):
         try:
-            self.bot.loadMacroAsCommand("scripts\\"+self.entry_path.get()+".mcr")
+            if self.entry_time.get() == "":
+                self.bot.loadMacroAsCommand("scripts\\"+self.entry_path.get()+".mcr")
+            else:
+                self.bot.createConditionalCommand(self.entry_time.get(), self.entry_path.get())
             self.commandListActualization()
             self.load.destroy()
         except Exception as erro:
@@ -517,11 +528,13 @@ class Application():
         for command_index in range(len(command_list)):
             if type(command_list[command_index]) == Macro:
                 command_text = command_list[command_index].getPath()
+            elif isinstance(command_list[command_index], ConditionalCommand):
+                command_text = str(command_list[command_index])
             else:
                 command_text = ""
-                if isinstance(command_list[command_index],MouseCommand):
+                if isinstance(command_list[command_index], MouseCommand):
                     command_text += "Mouse "
-                elif isinstance(command_list[command_index],KeyboardCommand):
+                elif isinstance(command_list[command_index], KeyboardCommand):
                     command_text += "Teclado "
                 else:
                     command_text += "Pausa "
