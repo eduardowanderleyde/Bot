@@ -121,7 +121,7 @@ class ConditionalCommand(Command):
             self.__command.executeMacro("q")
 
     def __str__(self) -> str:
-        response = "PlayOnTime " + str([self.__time, self.__path])
+        response = "PlayOnTime " + str(self.__time) + " " + str(self.__path)
         return response
 
 if __name__ == "__main__":
