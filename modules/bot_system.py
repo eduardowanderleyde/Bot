@@ -42,7 +42,7 @@ class Bot():
                             macro.insertCommand(self.macroLoad(command[1]))
                         if command[0] == "pauseCommand":
                             macro.insertCommand(Command(0, float(command[1])))
-                        if command[0] == "conditionalPlay":
+                        if command[0] == "PlayOnTime":
                             macro.insertCommand(ConditionalCommand(lambda: command[1] == str(datetime.now())[11:16],command[1] , self.macroLoad(command[2]), command[2]))
                     except:
                         pass
